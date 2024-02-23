@@ -1,44 +1,57 @@
-from flask import Flask, url_for, request, render_template, make_response, abort, redirect, session
+import random
+import string
+
+# Flask documentation and references can be found at: https://flask.palletsprojects.com/en/2.3.x/
+from flask import Flask, url_for, request, render_template, make_response, abort, redirect, session, json, jsonify
 from markupsafe import escape
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+title = "Demonstration"
 
 # Set the secret key to some random bytes. Keep this really secret!
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+decimal_num = random.random()
+random_num = round(decimal_num * 10000000)
+output_string = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(10))
+app.secret_key = str(random_num) + output_string
 
 
 @app.route('/')
 def index():
-    username = request.cookies.get('username')
-    resp = make_response(render_template(...))
-    resp.set_cookie('username', 'the username')
-    return resp
-    # return 'Index Page'
-    # if 'username' in session:
-    #     return f'Logged in as {session["username"]}'
-    # return 'You are not logged in'
+    return render_template('index.html', title=title)
 
 
-@app.route('/login_auth', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        return 'login_auth'
-    else:
-        return 'login_auth'
+@app.route('/redirect', methods=['GET', 'POST'])
+def redirect():
+    redirect_url = url_for('index')
+    return redirect(redirect_url)
 
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    if request.method == 'POST':
-        session['username'] = request.form['username']
-        return redirect(url_for('index'))
-    return '''
-            <form method="post">
-                <p><input type=text name=username>
-                <p><input type=submit value=Login>
-            </form>
-        '''
+# Example of separating out Get and Post requests for /login, rather than writing: methods=['GET', 'POST']
+@app.get('/login')
+def login_get():
+    if 'username' in session:
+        return f'Logged in as {session["username"]}'
+    return 'You are not logged in'
+
+
+# Example of separating out Get and Post requests for /login, rather than writing: methods=['GET', 'POST']
+@app.post('/login')
+def login_post():
+    return 'login'
+
+
+# @app.route('/login', methods=['POST', 'GET'])
+# def login():
+#     if request.method == 'POST':
+#         session['username'] = request.form['username']
+#         return redirect(url_for('index'))
+#     return '''
+#             <form method="post">
+#                 <p><input type=text name=username>
+#                 <p><input type=submit value=Login>
+#             </form>
+#         '''
     # error = None
     # if request.method == 'POST':
     #     if valid_login(request.form['username'],
@@ -50,12 +63,13 @@ def login():
     # # was GET or the credentials were invalid
     # return render_template('login.html', error=error)
 
-# @app.get('/login')
-# def login_get():
-#     return 'login'
-# @app.post('/login')
-# def login_post():
-#     return 'login'
+
+@app.route('/login_auth', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        return 'login_auth'
+    else:
+        return 'login_auth'
 
 
 @app.route('/logout')
@@ -65,27 +79,27 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/hello-world')
-def hello():
-    return '<p>Hello, World</p>'
-
-
 @app.route('/hello/')
 @app.route('/hello/<name>')
 def hello(name=None):
     return render_template('hello.html', name=name)
 
 
+@app.route('/hello-world')
+def hello_world():
+    return '<p>Hello, World</p>'
+
+
 @app.route('/user/<username>')
 def profile(username):
     # show the user profile for that user
-    return f'{username}\'s profile'
+    return f'{escape(username)}\'s profile'
 
 
 @app.route('/post/<int:post_id>')
 def show_post(post_id):
     # show the post with the given id, the id is an integer
-    return f'Post {post_id}'
+    return f'Post {escape(post_id)}'
 
 
 @app.route('/upload', methods=['GET', 'POST'])
@@ -102,16 +116,10 @@ def upload_file_secure():
         file.save(f"/var/www/uploads/{secure_filename(file.filename)}")
 
 
-@app.route('/path/<path:subpath>')
-def show_subpath(subpath):
-    # show the subpath after /path/
-    return f'Subpath {escape(subpath)}'
-
-
-# @app.route("/users")
-# def users_api():
-#     users = get_all_users()
-#     return [user.to_json() for user in users]
+@app.route('/path/<path:sub_path>')
+def show_sub_path(sub_path):
+    # show the sub_path after /path/
+    return f'Sub_path {escape(sub_path)}'
 
 
 # @app.route("/me")
@@ -122,10 +130,58 @@ def show_subpath(subpath):
 #         "theme": user.theme,
 #         "image": url_for("user_image", filename=user.image),
 #     }
+#
+# @app.route("/users")
+# def users_api():
+#     users = get_all_users()
+#     return [user.to_json() for user in users]
 
 
-@app.route('/projects/')
+@app.route('/post_form', methods=['POST'])
+def process_form():
+    if request.method == 'POST':
+        data = request.form
+        print(data['username'])
+        print(data['password'])
+        return data
+    elif request.method == 'GET':
+        return render_template('form.html')
+    else:
+        return "Method not allowed. Please use POST or GET."
+
+
+@app.route('/projects/', methods=['GET', 'POST'])
 def projects():
+    my_projects = {
+        "project1": {
+            "name": "project1",
+            "date": "2024-01-01"
+        },
+        "project2": {
+            "name": "project2",
+            "date": "2024-01-01"
+        }
+    }
+    if request.method == 'GET':
+        return jsonify(my_projects)
+    elif request.method == 'POST':
+        # To call and test this POST:
+        # curl -XPOST --location '127.0.0.1:5000/projects' --header 'Content-Type: application/json' --data '{"data":"one"}'
+        # Get request:
+        # curl --location --request GET '127.0.0.1:5000/projects' --header 'Content-Type: application/json'
+        params = request.get_json()  # > {"data":"one"}
+        params_keys = params.keys()
+        param_key = [i for i in params_keys][0]
+        params_values = params.values()
+        param_value = [i for i in params_values][0]
+        my_projects[f"project{param_key}"] = dict()
+        my_projects[f"project{param_key}"]["name"] = param_key
+        my_projects[f"project{param_key}"]["parameter_value"] = param_value
+        my_projects[f"project{param_key}"]["date"] = "2024-01-01"
+        # app.logger.debug(my_projects)
+        return my_projects
+    else:
+        redirect(url_for('page_not_found'))
     return 'The project page'
 
 
@@ -145,6 +201,6 @@ with app.test_request_context():
     print(url_for('login', next='/'))
     print(url_for('profile', username='John Doe'))
 
-app.logger.debug('A value for debugging')
-app.logger.warning('A warning occurred (%d apples)', 42)
-app.logger.error('An error occurred')
+app.logger.debug('Debug: Debugging - Test')
+app.logger.warning('Warning: Warning - Test (%d exceptions caught)', 10)
+app.logger.error('Error: Error - Test')
