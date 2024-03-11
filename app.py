@@ -185,6 +185,122 @@ def projects():
     return 'The project page'
 
 
+@app.route('/api', methods=['GET'])
+def api():
+    api_dict = {
+        "apis": {
+            '/': {
+                'type': 'string',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'html'
+            },
+            'login': {
+                'type': 'session',
+                'methods': [
+                    'get',
+                    'post'
+                ],
+                'returns': 'session'
+            },
+            'login_auth': {
+                'type': 'json',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'html code'
+            },
+            'logout': {
+                'type': 'session',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'session'
+            },
+            'hello': {
+                'type': 'string',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'string'
+            },
+            'hello/<name>': {
+                'type': 'string',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'string'
+            },
+            'hello-world': {
+                'type': 'string',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'string'
+            },
+            'user/<username>': {
+                'type': 'string',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'string'
+            },
+            'post/<post_id>': {
+                'type': 'int',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'int'
+            },
+            'upload': {
+                'type': 'file',
+                'methods': [
+                    'post'
+                ],
+                'returns': 'none'
+            },
+            'upload-secure': {
+                'type': 'file',
+                'methods': [
+                    'post'
+                ],
+                'returns': 'none'
+            },
+            'path/<sub_path>': {
+                'type': 'path',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'string'
+            },
+            'post_form': {
+                'type': 'file',
+                'methods': [
+                    'post'
+                ],
+                'returns': 'html'
+            },
+            'projects': {
+                'type': 'json',
+                'methods': [
+                    'get',
+                    'post'
+                ],
+                'returns': 'json'
+            },
+            'about': {
+                'type': 'string',
+                'methods': [
+                    'get'
+                ],
+                'returns': 'string'
+            }
+        }
+    }
+    return api_dict
+
+
 @app.route('/about')
 def about():
     return 'The about page'
