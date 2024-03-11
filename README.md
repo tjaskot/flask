@@ -9,3 +9,20 @@ Development Server
 
 Production Server
 - waitress-serve --host 127.0.0.1 app:app
+
+Api Listing
+- /
+- login
+- login_auth
+- logout
+- hello
+- hello/<name>
+- hello-world
+- user/<username>
+- post/<post_id>
+- upload
+- upload-secure
+- path/<sub_path>
+- post_form
+- projects
+- about
