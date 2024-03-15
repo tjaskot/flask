@@ -57,3 +57,25 @@ Table View for Debian/Ubuntu architectures:
 | /etc/systemd/system  | Local configuration          |
 | /run/systemd/system  | Runtime units                |
 | /lib/systemd/system  | Units of installed packages  |
+
+For logs and viewing of journal daemon managed by the linux server, use the following journalctl commands.
+
+View the logs for the microblog service:
+```shell
+journalctl -u microapp
+```
+
+View the last 25 log entries for the microblog service:
+```shell
+journalctl -u microapp -n 25
+```
+
+View the logs for the microblog service from the last five minutes:
+```shell
+journalctl -u microapp --since=-5m
+```
+
+Tail the logs for the microblog service:
+```shell
+journalctl -u microapp -f
+```
