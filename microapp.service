@@ -1,0 +1,12 @@
+[Unit]
+Description=Flask microservice api ran under systemd configuration
+After=network.target
+
+[Service]
+User=trevor
+WorkingDirectory=/home/trevor/Documents/dev/flask
+ExecStart=/home/trevor/Documents/dev/flask/venv/bin/waitress-serve --host 127.0.0.1 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
