@@ -2,7 +2,8 @@
 
 Basic flask app with routes and endpoints for testing local servers and services in micro api framework
 
-## Run program commands:
+## WSGI App Hosting
+- https://www.devdungeon.com/content/run-python-wsgi-web-app-waitress
 
 ### Development Server
 - flask --app app run --debug
