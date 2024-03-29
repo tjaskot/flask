@@ -5,8 +5,10 @@ After=network.target
 [Service]
 User=trevor
 WorkingDirectory=/home/trevor/Documents/dev/flask
-ExecStart=/home/trevor/Documents/dev/flask/venv/bin/waitress-serve --host 127.0.0.1 app:app
+ExecStart=/home/trevor/Documents/dev/flask/venv/bin/waitress-serve --host 0.0.0.0 app:app
 Restart=always
+RestartSec=2
+KillMode=Process
 
 [Install]
 WantedBy=multi-user.target
