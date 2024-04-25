@@ -23,12 +23,16 @@ happen within minutes, if not less.
 
 ```shell
 sudo -i (login with root privileges)
+yum install python (ensure that pyton 3 is being installed)
 # If pip does not already exist, run following command
 python -m ensurepip --upgrade
 # If pipenv does not already exist, run following command
 python -m pip install pipenv
+
+# !! EXIT SUDO !!
+# Otherwise when trying to run pipenv, error will occur: "Error: the command waitress-serve could not be found wihtin PATH or Pipfile's [Scripts]"
 # Install virtual environment letting Pipfile manage the packages
-cd /home/user/flask && pipenv install
+cd /home/user/flask && python -m pip install pipenv && pipenv install
 # Test local service as root
 python -m pipenv run waitress-serve --host 0.0.0.0 main:app
 ```
